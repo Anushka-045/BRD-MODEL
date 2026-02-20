@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings | BRD Intelligence</title>
+<script src="theme.js"></script>
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { 
+    getAuth, onAuthStateChanged, signOut, EmailAuthProvider, 
+    reauthenticateWithCredential, updatePassword, deleteUser, linkWithCredential 
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDxf6hJgWRplrxqMzCFEjSvVUw9w6QP6Xg",
+    authDomain: "brd-model.firebaseapp.com",
+    projectId: "brd-model",
+    storageBucket: "brd-model.appspot.com",
+    messagingSenderId: "236852751504",
+    appId: "1:236852751504:web:eb2db4a4d00ecd2b1bfc15",
+    measurementId: "G-Y9ZJGB183B"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Auth state
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) window.location.href = "index.html";
+    else {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        document.getElementById("name").value = data.name || "";
+        document.getElementById("email").value = data.email || "";
+      }
+    }
+  });
+
+  window.logout = async function() {
+    await signOut(auth);
+    window.location.href = "index.html";
+  };
+  window.saveProfile = async function() {
+    const user = auth.currentUser;
+    if (!user) return alert("No user logged in.");
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    await setDoc(doc(db, "users", user.uid), { name, email }, { merge: true });
+    alert("Profile saved!");
+  };
+  window.deleteAccount = async function() {
+    const user = auth.currentUser;
+    if (!user) return alert("No user logged in.");
+    if (!confirm("Delete account?")) return;
+    await deleteDoc(doc(db, "users", user.uid));
+    await deleteUser(user);
+    alert("Account deleted!");
+    window.location.href = "index.html";
+  };
+  window.addPasswordForGoogleUser = async function() {
+    const user = auth.currentUser;
+    if (!user) return alert("No user logged in");
+
+    const newPass = prompt("Set a password for your account:");
+    if (!newPass) return;
+
+    const credential = EmailAuthProvider.credential(user.email, newPass);
+
+    try {
+      await linkWithCredential(user, credential);
+      alert("Password added successfully! You can now use email/password login.");
+    } catch(e) {
+      if (e.code === "auth/credential-already-in-use") {
+        alert("This email is already linked to another account.");
+      } else {
+        alert("Error adding password: " + e.message);
+      }
+    }
+  };
+  window.handlePassword = async function() {
+    const user = auth.currentUser;
+    if (!user) return alert("No user logged in");
+
+    const isGoogleUser = user.providerData.some(p => p.providerId === "google.com");
+
+    if (isGoogleUser) {
+      addPasswordForGoogleUser();
+    } else {
+      const currentPass = prompt("Enter your current password:");
+      if (!currentPass) return;
+      const cred = EmailAuthProvider.credential(user.email, currentPass);
+
+      reauthenticateWithCredential(user, cred)
+        .then(() => {
+          const newPass = prompt("Enter new password:");
+          if (!newPass) return;
+          updatePassword(user, newPass)
+            .then(() => alert("Password updated!"))
+            .catch(e => alert("Error updating password: " + e.message));
+        })
+        .catch(e => alert("Reauthentication failed: " + e.message));
+    }
+  };
+  window.setTheme = function(theme){
+    document.body.classList.remove('dark','light');
+    document.body.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  };
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  setTheme(savedTheme);
+
+</script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;scroll-behavior:smooth;}
+body{overflow-x:hidden;}
+body.dark{background:#0f172a;color:white;}
+body.light{background:#f1f5f9;color:#0f172a;}
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+
+.container{display:flex;min-height:100vh;transition:all 0.3s ease;}
+
+.sidebar{
+  width:260px;height:100vh;
+  background:rgba(30,41,59,0.95);backdrop-filter:blur(20px);
+  padding:25px;transition:width 0.4s ease,padding 0.4s ease;
+  overflow-y:auto;flex-shrink:0;position:relative;
+}
+body.light .sidebar{background:rgba(241,245,249,0.95);}
+.sidebar.hidden{width:0;padding:0;overflow:hidden;}
+.menu-btn{
+  position:fixed;top:20px;left:20px;background:#6366f1;border:none;
+  color:white;padding:10px 14px;border-radius:10px;cursor:pointer;
+  z-index:1100;font-size:15px;
+}
+body.light .menu-btn{color:#0f172a;}
+.sidebar a{
+  display:block;text-decoration:none;padding:12px 10px;margin:8px 0;border-radius:8px;
+  transition:0.3s;color:white;
+}
+body.light .sidebar a{color:#0f172a;}
+.sidebar a:hover{background:rgba(255,255,255,0.1);}
+body.light .sidebar a:hover{background:rgba(0,0,0,0.05);}
+
+.content{flex:1;padding:40px;transition:all 0.4s ease;}
+.hero{height:40vh;display:flex;flex-direction:column;justify-content:center;}
+.hero h1{
+  font-size:42px;background:linear-gradient(90deg,#6366f1,#22d3ee);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero p{margin-top:15px;max-width:700px;opacity:0.8;}
+
+.card{
+  background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);
+  padding:30px;border-radius:20px;margin-top:40px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+body.light .card{background:rgba(0,0,0,0.05);}
+input{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.1);color:white;}
+body.light input{background:rgba(0,0,0,0.05);color:#0f172a;}
+button{margin-top:15px;padding:10px 25px;border:none;border-radius:20px;background:#6366f1;color:white;cursor:pointer;}
+button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.2);}
+body.light button.secondary{border:1px solid rgba(0,0,0,0.2);color:#0f172a;}
+button.danger{background:#ef4444;}
+footer{align-self:center;margin-top:50px;opacity:0.7;}
+</style>
+</head>
+
+<body>
+<canvas id="particles"></canvas>
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+<div class="container">
+  <div class="sidebar" id="sidebar">
+    <h2 style="margin-left:50px;">MENU</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="generator.html">BRD Generator</a>
+    <a href="integrations.html">Integrations</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="traceability.html">Traceability</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+  <div class="content" id="content">
+    <div class="hero">
+      <h1>Platform Settings</h1>
+      <p>Manage your profile, preferences, and platform configurations.</p>
+    </div>
+    <div class="card">
+      <h2>Profile Settings</h2>
+      <input id="name" placeholder="Full Name">
+      <input id="email" placeholder="Email Address">
+      <button onclick="saveProfile()">Save Changes</button>
+    </div>
+    <div class="card">
+      <h2>Theme Preference</h2>
+      <button onclick="setTheme('dark')">Dark Mode</button>
+      <button onclick="setTheme('light')">Light Mode</button>
+    </div>
+    <div class="card">
+      <h2>Security</h2>
+      <button class="secondary" onclick="handlePassword()">Add/Change Password</button>
+      <button class="danger" onclick="deleteAccount()">Delete Account</button>
+    </div>
+
+    <footer>© 2026 BRD Intelligence Platform</footer>
+  </div>
+</div>
+
+<script>
+function toggleSidebar(){
+  let sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("hidden");
+}
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let particles=[];
+for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2,d:Math.random()*1});}
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(99,102,241,0.5)";
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    p.y+=p.d;
+    if(p.y>canvas.height)p.y=0;
+  });
+}
+setInterval(draw,33);
+</script>
+</body>
+</html>
