@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traceability | BRD Intelligence</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;scroll-behavior:smooth;}
+body{background:#0f172a;color:white;overflow-x:hidden;transition: all 0.3s ease;}
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+
+/* Sidebar & Layout */
+.container{display:flex;width:100%;transition: all 0.4s ease;}
+.sidebar{
+  width:260px;height:100vh;padding:25px;
+  background:rgba(30,41,59,0.95);backdrop-filter:blur(20px);
+  transition: width 0.4s ease,padding 0.4s ease;overflow-y:auto;
+  flex-shrink:0;
+}
+.sidebar.hidden{width:0;padding:0;overflow:hidden;}
+.sidebar a{display:block;color:white;text-decoration:none;padding:12px 10px;margin:8px 0;border-radius:8px;transition:0.3s;}
+.sidebar a:hover{background:rgba(255,255,255,0.1);}
+.sidebar h2{margin-left:40px;}
+
+/* Content */
+.content{
+  flex:1;
+  padding:40px;
+  transition: all 0.4s ease;
+}
+
+/* Hero */
+.hero{height:40vh;display:flex;flex-direction:column;justify-content:center;}
+.hero h1{font-size:38px;background:linear-gradient(90deg,#6366f1,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+.card{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);padding:30px;border-radius:20px;margin-top:40px;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+table{width:100%;border-collapse:collapse;margin-top:20px;}
+th,td{padding:12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.1);}
+th{color:#22d3ee;}
+.status{padding:4px 10px;border-radius:12px;font-size:12px;}
+.complete{background:#16a34a;}
+.progress{background:#facc15;color:black;}
+.risk-high{color:#f87171;}
+.risk-medium{color:#facc15;}
+.menu-btn{position:fixed;top:17px;left:20px;background:#6366f1;border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer;z-index:1100;}
+.ai-button{position:fixed;bottom:30px;right:30px;background:#6366f1;border:none;padding:15px;border-radius:50%;color:white;cursor:pointer;}
+.ai-popup{position:fixed;bottom:90px;right:30px;background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);padding:20px;border-radius:20px;width:300px;display:none;}
+footer{margin-top:80px;text-align:center;opacity:0.5;}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+<div class="container" id="container">
+  <div class="sidebar" id="sidebar">
+    <h2>MENU</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="generator.html">BRD Generator</a>
+    <a href="integrations.html">Integrations</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="traceability.html">Traceability</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+  <div class="content" id="content">
+    <div class="hero">
+      <h1>Enterprise Traceability Matrix</h1>
+      <p>End-to-end lifecycle visibility across Requirements, Design, Development, Testing, and Release.</p>
+    </div>
+
+    <div class="card">
+      <h2>Requirement Lifecycle Mapping</h2>
+      <table id="traceTable">
+        <thead>
+          <tr><th>Req ID</th><th>Description</th><th>Dev Task</th><th>Test Case</th><th>Status</th><th>Risk</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card" id="impactCard">
+      <h2>Impact Analysis</h2>
+      <p><strong>Selected Requirement:</strong> <span id="impactReq">Loading...</span></p>
+      <p>Linked Test Cases: <span id="impactTest">0</span></p>
+      <p>Linked Dev Tasks: <span id="impactDev">0</span></p>
+      <p>Modules Affected: <span id="impactModules">-</span></p>
+      <p id="impactRisk" class="risk-high">Risk Score: HIGH ⚠</p>
+    </div>
+
+    <div class="card">
+      <h2>Test Coverage Analytics</h2>
+      <canvas id="coverageChart"></canvas>
+    </div>
+
+    <div class="card" id="conflictCard">
+      <h2>AI Conflict Detection</h2>
+      <p id="conflictText">⚠ Loading conflicts...</p>
+    </div>
+
+    <footer>© 2026 BRD Intelligence Platform</footer>
+  </div>
+</div>
+
+<button class="ai-button" onclick="toggleAI()">AI</button>
+<div class="ai-popup" id="aiPopup">
+<h4>AI Assistant</h4>
+<p>Ask me to analyze requirement dependencies or predict impact risk.</p>
+</div>
+
+<script>
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("hidden");
+}
+function toggleAI(){
+  const popup = document.getElementById("aiPopup");
+  popup.style.display = popup.style.display==='block'?'none':'block';
+}
+const canvas=document.getElementById("particles"), ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+let particles=[];
+for(let i=0;i<80;i++) particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2,d:Math.random()*1});
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(99,102,241,0.5)"; particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill(); p.y+=p.d; if(p.y>canvas.height)p.y=0;});}
+setInterval(draw,33);
+</script>
+<script src="theme.js"></script>
+</body>
+</html>

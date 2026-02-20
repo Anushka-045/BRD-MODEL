@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PS21 BRD AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+color:white;
+}
+nav{
+display:flex;
+justify-content:space-between;
+padding:20px 50px;
+}
+nav a{
+color:white;
+text-decoration:none;
+margin-left:20px;
+}
+.hero{
+height:90vh;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+.glass{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(15px);
+padding:50px;
+border-radius:20px;
+}
+button{
+padding:12px 25px;
+border:none;
+border-radius:25px;
+background:#6366f1;
+color:white;
+cursor:pointer;
+}
+footer{
+text-align:center;
+padding:20px;
+background:#0f172a;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<h2>BRD AI</h2>
+<div>
+<a href="login.html">Login</a>
+<a href="signup.html">Signup</a>
+</div>
+</nav>
+
+<section class="hero">
+<div class="glass">
+<h1>AI Powered BRD Generator</h1>
+<p>Convert emails, Slack, meetings & documents into structured professional BRDs.</p>
+<button onclick="location.href='signup.html'">Get Started</button>
+</div>
+</section>
+
+<footer>
+© 2026  BRD AI Platform
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

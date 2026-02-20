@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRD Intelligence Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;scroll-behavior:smooth;}
+body{background:#0f172a;color:white;overflow-x:hidden;transition:all 0.3s ease;}
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+
+.container{display:flex;transition:all 0.4s ease;}
+.sidebar{
+  width:260px;height:100vh;padding:25px;
+  background:rgba(30,41,59,0.95);backdrop-filter:blur(20px);
+  transition:width 0.4s ease,padding 0.4s ease;overflow-y:auto;
+  flex-shrink:0;
+}
+.sidebar.hidden{width:0;padding:0;overflow:hidden;}
+.sidebar a{display:block;color:white;text-decoration:none;padding:12px 10px;margin:8px 0;border-radius:8px;transition:0.3s;}
+.sidebar a:hover{background:rgba(255,255,255,0.1);}
+.sidebar h2{margin-left:50px;}
+
+
+.content{flex:1;padding:40px;transition:all 0.4s ease;}
+
+.hero{height:60vh;display:flex;flex-direction:column;justify-content:center;}
+.hero h1{font-size:42px;background:linear-gradient(90deg,#6366f1,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{margin-top:15px;max-width:700px;opacity:0.8;}
+
+.card{
+  background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);padding:30px;border-radius:20px;
+  margin-top:40px;box-shadow:0 8px 32px rgba(0,0,0,0.4);opacity:0;transform:translateY(40px);
+  transition:0.8s;
+}
+.card.show{opacity:1;transform:translateY(0);}
+
+.menu-btn{position:fixed;top:20px;left:20px;background:#6366f1;border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer;z-index:1100;font-size:15px;}
+footer{margin-top:80px;text-align:center;opacity:0.5;}
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+<div id="welcome" style="position:fixed;top:20px;right:20px;color:white;font-size:18px;z-index:1100;text-align:right;"></div>
+
+<div class="container">
+  <div class="sidebar" id="sidebar">
+    <h2>MENU</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="generator.html">BRD Generator</a>
+    <a href="integrations.html">Integrations</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="traceability.html">Traceability</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+  <div class="content">
+    <div class="hero">
+      <h1 id="typewriter"></h1>
+      <p>Transforming scattered communication into structured executive-ready BRDs with AI precision.</p>
+    </div>
+
+    <div class="card reveal">
+      <h2>Model Accuracy Insights</h2>
+      <canvas id="chart1"></canvas>
+    </div>
+
+    <div class="card reveal">
+      <h2>Requirement Distribution</h2>
+      <canvas id="chart2"></canvas>
+    </div>
+
+    <footer>© 2026 BRD Intelligence Platform</footer>
+  </div>
+</div>
+
+<script>
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("hidden");
+}
+function logout(){
+  alert("Logging out...");
+  window.location.href = "login.html"; 
+}
+let text="AI-Powered BRD Intelligence Engine";
+let i=0;
+function typeWriter(){
+  if(i<text.length){document.getElementById("typewriter").innerHTML+=text.charAt(i);i++;setTimeout(typeWriter,50);}
+}
+typeWriter();
+let reveals=document.querySelectorAll(".reveal");
+window.addEventListener("scroll",()=>{
+  reveals.forEach(el=>{
+    let top=el.getBoundingClientRect().top;
+    if(top<window.innerHeight-100){el.classList.add("show");}
+  });
+});
+new Chart(document.getElementById("chart1"), {
+  type: "bar",
+  data: { labels:["Requirement Extraction","Noise Filtering","Sentiment Analysis","Conflict Detection"], datasets:[{label:"Accuracy (%)",data:[91.4,86.2,79.8,84.6],backgroundColor:["#6366f1","#22d3ee","#4ade80","#facc15"]}] },
+  options:{responsive:true,maintainAspectRatio:true,aspectRatio:2,plugins:{legend:{display:false},title:{display:true,text:"Model Validation Results"}},scales:{y:{beginAtZero:true,max:100}}}
+});
+new Chart(document.getElementById("chart2"), {
+  type:"doughnut",
+  data:{labels:["Functional","Non-Functional","Stakeholder Requests","Timeline Constraints"],datasets:[{data:[52,28,15,5],backgroundColor:["#6366f1","#22d3ee","#4ade80","#f87171"]}]},
+  options:{responsive:true,maintainAspectRatio:true,aspectRatio:2}
+});
+
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+let particles=[];
+for(let i=0;i<100;i++) particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2,d:Math.random()*1});
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="rgba(99,102,241,0.5)";particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.d;if(p.y>canvas.height)p.y=0;});}
+setInterval(draw,33);
+</script>
+<script src="theme.js"></script>
+</body>
+</html>
