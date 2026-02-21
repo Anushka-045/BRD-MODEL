@@ -138,12 +138,13 @@ Communication Data:
 """
     try:
         response = model_gemini.generate_content(prompt)
+
         text_response = response.text.strip()
         text_response = text_response.replace("```json", "").replace("```", "").strip()
+
         return json.loads(text_response)
+
     except Exception as e:
         return {"error": str(e)}
-
-
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
