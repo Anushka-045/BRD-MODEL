@@ -4,3 +4,5 @@ __pycache__/
 test_*.py
 ~$*
 new.py
+DATA/archive/
+*.csv
