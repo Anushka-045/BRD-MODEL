@@ -1,10 +1,6 @@
 venv/
 __pycache__/
 .env
-*.pdf
-*.docx
-*.png
-*.txt
 test_*.py
 ~$*
 new.py
