@@ -136,8 +136,6 @@ JSON format:
 Communication Data:
 {user_text}
 """
-
-    ai_reply = result["choices"][0]["message"]["content"].replace("```json", "").replace("```", "").strip()
     try:
         response = model_gemini.generate_content(prompt)
         text_response = response.text.strip()
