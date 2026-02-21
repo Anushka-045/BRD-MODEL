@@ -1,126 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>BRD Generator</title>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+<title>BRD Generator</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;}
+/* Base Reset */
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
 body{background:#0f172a;color:white;overflow-x:hidden;transition:0.3s;}
-.container{display:flex;transition:all 0.4s ease;}
-
-.sidebar{
-width:260px;height:100vh;
-background:rgba(30,41,59,0.95);
-backdrop-filter:blur(20px);
-padding:25px;
-transition:width 0.4s ease,padding 0.4s ease;
-overflow-y:auto;
-flex-shrink:0;
-}
-.sidebar.hide{width:0;padding:0;overflow:hidden;}
-.sidebar h2{text-align:center;margin-bottom:40px;}
-.sidebar a{display:block;color:white;text-decoration:none;padding:12px 10px;margin:8px 0;border-radius:8px;transition:0.3s;}
+.container{display:flex;min-height:100vh;transition:0.4s;}
+.sidebar{width:240px;background:#1e293b;padding:25px 15px;flex-shrink:0;display:flex;flex-direction:column;transition:0.4s;}
+.sidebar.hidden{width:0;padding:0;overflow:hidden;}
+.sidebar h2{text-align:center;margin-bottom:30px;font-size:20px;}
+.sidebar a{display:block;color:white;text-decoration:none;padding:10px 15px;margin:6px 0;border-radius:8px;transition:0.2s;}
 .sidebar a:hover{background:rgba(255,255,255,0.1);}
-
-.menu-btn{
-position:fixed;top:1px;left:26px;
-background:#6366f1;border:none;color:white;padding:10px 14px;
-border-radius:10px;cursor:pointer;z-index:1100;font-size:18px;
-}
-
-.content{
-flex:1;
-padding:60px 40px;
-min-height:100vh;
-transition:all 0.4s ease;
-}
-
-.hero{
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(20px);
-padding:50px;
-border-radius:25px;
-margin-bottom:40px;
-box-shadow:0 15px 40px rgba(0,0,0,0.4);
-}
-.hero h1{
-font-size:36px;
-background:linear-gradient(90deg,#6366f1,#22d3ee);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-margin-bottom:15px;
-}
-
-.card{
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(20px);
-padding:30px;
-border-radius:20px;
-margin-bottom:30px;
-box-shadow:0 10px 30px rgba(0,0,0,0.4);
-transition:0.3s;
-}
-.card:hover{transform:translateY(-5px);}
-
-textarea{
-width:100%;height:220px;border-radius:15px;border:none;
-padding:15px;background:rgba(255,255,255,0.1);
-color:white;resize:none;outline:none;margin-top:15px;
-}
-button{
-margin-top:20px;padding:12px 25px;border:none;border-radius:25px;
-background:#6366f1;color:white;cursor:pointer;font-size:15px;transition:0.3s;
-}
+.menu-btn{position:fixed;top:20px;left:20px;background:#6366f1;border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer;z-index:1100;font-size:15px;}
+.content{flex:1;padding:40px 30px;transition:0.4s;}
+.hero{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);padding:30px;border-radius:20px;margin-bottom:25px;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+.hero h1{font-size:36px;background:linear-gradient(90deg,#6366f1,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:15px;}
+.hero p{opacity:0.8;}
+.card{background:rgba(255,255,255,0.05);padding:25px;border-radius:15px;margin-bottom:25px;box-shadow:0 5px 20px rgba(0,0,0,0.4);transition:0.4s;}
+.card h3{font-size:20px;margin-bottom:12px;color:#22d3ee;}
+textarea{width:100%;height:150px;border:none;border-radius:10px;padding:12px;background:rgba(255,255,255,0.1);color:white;resize:none;outline:none;margin-bottom:12px;transition:0.2s;}
+textarea:focus{background:rgba(255,255,255,0.15);}
+input[type="file"]{margin-top:10px;margin-bottom:12px;color:white;}
+button{margin-top:8px;padding:10px 22px;border:none;border-radius:20px;background:#6366f1;color:white;cursor:pointer;transition:0.3s;}
 button:hover{background:#4f46e5;}
-
-footer{text-align:center;margin-top:60px;opacity:0.5;}
+#loading{display:none;margin-top:10px;color:#22d3ee;}
+#output{margin-top:12px;white-space:pre-wrap;background:rgba(255,255,255,0.05);padding:15px;border-radius:10px;max-height:400px;overflow:auto;font-family:monospace;font-size:14px;}
 </style>
 </head>
 <body>
 
-<button class="menu-btn">☰</button>
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
 
 <div class="container">
-  <div class="sidebar">
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
     <h2>MENU</h2>
     <a href="dashboard.html">Dashboard</a>
     <a href="generator.html">BRD Generator</a>
-    <a href="integrations.html">Integrations</a>
     <a href="analytics.html">Analytics</a>
-    <a href="traceability.html">Traceability</a>
     <a href="settings.html">Settings</a>
-    <a href="#">Logout</a>
+    <a href="#" onclick="logout()">Logout</a>
   </div>
 
+  <!-- Main Content -->
   <div class="content">
     <div class="hero">
-      <h1>AI-Powered BRD Generator</h1>
-      <p>Upload emails, Slack threads, meeting transcripts or paste communication data. Our AI engine extracts requirements, filters noise, detects conflicts, and generates a fully structured Business Requirements Document.</p>
+      <h1 id="typewriter"></h1>
+      <p>Upload communications or paste data to generate fully structured BRDs automatically with AI.</p>
     </div>
 
     <div class="card">
-      <h3>Paste Conversations / Upload Data</h3>
-      <textarea placeholder="Paste emails, Slack messages, transcripts here..."></textarea>
-      <button>Generate Structured BRD</button>
+      <h3>Paste Communication</h3>
+      <textarea id="textInput" placeholder="Paste emails, meeting notes, chats..."></textarea>
+      <button onclick="generateText()">Generate BRD</button>
     </div>
 
     <div class="card">
-      <h3>Generated Sections Preview</h3>
-      <p>Executive Summary • Business Objectives • Stakeholder Analysis • Functional Requirements • Non-Functional Requirements • Assumptions • Timeline • Success Metrics</p>
+      <h3>Upload File (PDF, DOCX, Image, TXT)</h3>
+      <input type="file" id="fileInput">
+      <button onclick="uploadFile()">Upload & Generate</button>
     </div>
 
-    <footer>© 2026 PS21 BRD AI Platform</footer>
+    <div id="loading">Processing... Please wait</div>
+
+    <div class="card">
+      <h3>Generated BRD Output</h3>
+      <div id="output">Result will appear here...</div>
+    </div>
   </div>
 </div>
 
 <script>
-const menuBtn = document.querySelector(".menu-btn");
-const sidebar = document.querySelector(".sidebar");
-menuBtn.onclick = function(){
-  sidebar.classList.toggle("hide");
+const API_BASE = "http://127.0.0.1:5000";
+const loading = document.getElementById("loading");
+const output = document.getElementById("output");
+
+// Sidebar toggle
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("hidden");}
+
+// Dummy logout
+function logout(){alert("Logging out..."); window.location.href="login.html";}
+
+// Typewriter hero text
+let text="AI-Powered BRD Generator";
+let i=0;
+function typeWriter(){if(i<text.length){document.getElementById("typewriter").innerHTML+=text.charAt(i);i++;setTimeout(typeWriter,50);}}
+typeWriter();
+
+// TEXT GENERATION
+async function generateText(){
+    const text=document.getElementById("textInput").value;
+    if(!text.trim()){alert("Please enter some text");return;}
+    loading.style.display="block"; output.innerText="";
+    try{
+        const response = await fetch(API_BASE + "/generate",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({text:text})
+        });
+        const data = await response.json();
+        output.innerText = JSON.stringify(data,null,2);
+    }catch(error){output.innerText="Error connecting to backend";console.error(error);}
+    loading.style.display="none";
+}
+
+// FILE UPLOAD
+async function uploadFile(){
+    const fileInput=document.getElementById("fileInput");
+    const file=fileInput.files[0];
+    if(!file){alert("Please select a file");return;}
+    const formData=new FormData(); formData.append("file",file);
+    loading.style.display="block"; output.innerText="";
+    try{
+        const response=await fetch(API_BASE+"/upload-file",{method:"POST",body:formData});
+        const data=await response.json();
+        output.innerText=JSON.stringify(data,null,2);
+    }catch(error){output.innerText="Error uploading file";console.error(error);}
+    loading.style.display="none";
 }
 </script>
-<script src="theme.js"></script>
+
 </body>
 </html>
