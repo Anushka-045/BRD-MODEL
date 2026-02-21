@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 import json
 import os
@@ -11,7 +12,10 @@ from PIL import Image
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 load_dotenv()
 api_key = os.getenv("OPENROUTER_API_KEY")
+if not api_key:
+    raise Exception("OPENROUTER_API_KEY not found. Check your .env file")
 app = Flask(__name__)
+CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  
 MAX_CHARS = 8000
 @app.route("/")
@@ -19,7 +23,13 @@ def home():
     return "Flask+DEEPSEEK is running"
 @app.route("/generate",methods=["POST"])
 def generate():
-    user_text =request.json.get("text")
+    data = request.json
+    if not data or "text" not in data:
+        return jsonify({"error": "No text provided"}), 400
+
+    user_text = data.get("text")
+    if len(user_text) > MAX_CHARS:
+        user_text = user_text[:MAX_CHARS]
     result = generate_from_text(user_text)
     return jsonify(result)
 @app.route("/upload-file", methods=["POST"])
@@ -94,6 +104,9 @@ def upload_file():
 @app.route("/edit",methods=["POST"])
 def edit():
     data_input = request.json
+    if not data_input:
+        return jsonify({"error": "Invalid request"}), 400
+
     current_brd = data_input.get("current_brd")
     instruction = data_input.get("instruction")
     url = "https://openrouter.ai/api/v1/chat/completions"
@@ -117,8 +130,11 @@ def edit():
             {"role": "user", "content": prompt}
         ]
     }
-    response = requests.post(url,headers=headers,json=data)
+    response = requests.post(url, headers=headers, json=data, timeout=30)
     result = response.json()
+    print("OpenRouter response:", result)
+    if "choices" not in result:
+        return jsonify({"error": "AI service failed", "details": result})
     ai_reply = result["choices"][0]["message"]["content"]
     ai_reply = ai_reply.replace("```json", "").replace("```", "").strip()
 
@@ -160,7 +176,7 @@ def generate_from_text(user_text):
         "functional_requirements": [],
         "non_functional_requirements": [],
         "assumptions": [],
-        "timeline": ""
+        "timeline": "",
         "conflicts": []
     }}
     Communication Data:
@@ -173,9 +189,12 @@ def generate_from_text(user_text):
         ]
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, timeout=30)
     result = response.json()
+    print("OpenRouter response:", result)
 
+    if "choices" not in result:
+        return {"error": "AI service failed", "details": result}
     ai_reply = result["choices"][0]["message"]["content"]
     ai_reply = ai_reply.replace("```json", "").replace("```", "").strip()
 
