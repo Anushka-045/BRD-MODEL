@@ -1,76 +1,657 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>PS21 BRD AI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{
-margin:0;
-font-family:Segoe UI;
-background:linear-gradient(135deg,#0f172a,#1e293b);
-color:white;
-}
-nav{
-display:flex;
-justify-content:space-between;
-padding:20px 50px;
-}
-nav a{
-color:white;
-text-decoration:none;
-margin-left:20px;
-}
-.hero{
-height:90vh;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-}
-.glass{
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(15px);
-padding:50px;
-border-radius:20px;
-}
-button{
-padding:12px 25px;
-border:none;
-border-radius:25px;
-background:#6366f1;
-color:white;
-cursor:pointer;
-}
-footer{
-text-align:center;
-padding:20px;
-background:#0f172a;
-}
-</style>
+    <title>PS21 BRD AI - Professional Business Requirements Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+            color: white;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        nav h2 {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #6366f1;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="200" cy="200" r="2" fill="%23ffffff20"/><circle cx="400" cy="100" r="1" fill="%23ffffff30"/><circle cx="600" cy="300" r="2" fill="%23ffffff20"/><circle cx="800" cy="150" r="1" fill="%23ffffff40"/></svg>');
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            33% { transform: translateY(-20px) translateX(10px); }
+            66% { transform: translateY(10px) translateX(-10px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            padding: 60px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #cbd5e1;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            color: white;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Main Content */
+        .content {
+            margin-top: 80px;
+        }
+
+        .section {
+            padding: 80px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #6366f1;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #cbd5e1;
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            color: #e2e8f0;
+        }
+
+        .about-text h3 {
+            color: #6366f1;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .stat-card {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #6366f1;
+            display: block;
+        }
+
+        .stat-label {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Process Section */
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .step {
+            position: relative;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .step h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .step p {
+            color: #cbd5e1;
+        }
+
+        /* Pricing Section */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #6366f1;
+            transform: scale(1.05);
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #6366f1;
+            margin: 20px 0;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        .pricing-features li {
+            padding: 8px 0;
+            color: #cbd5e1;
+        }
+
+        .pricing-features li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #6366f1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            nav .nav-links {
+                gap: 15px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .glass {
+                padding: 40px 30px;
+                margin: 0 20px;
+            }
+
+            .section {
+                padding: 60px 20px;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+
+        /* Scroll animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
 </head>
 
 <body>
 
 <nav>
-<h2>BRD AI</h2>
-<div>
-<a href="login.html">Login</a>
-<a href="signup.html">Signup</a>
-</div>
+    <h2><i class="fas fa-robot"></i> BRD AI</h2>
+    <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="#process">Process</a>
+        <a href="#pricing">Pricing</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+    </div>
 </nav>
 
 <section class="hero">
-<div class="glass">
-<h1>AI Powered BRD Generator</h1>
-<p>Convert emails, Slack, meetings & documents into structured professional BRDs.</p>
-<button onclick="location.href='signup.html'">Get Started</button>
-</div>
+    <div class="glass">
+        <h1>AI-Powered BRD Generator</h1>
+        <p>Transform emails, Slack messages, meetings, and documents into structured professional Business Requirements Documents with cutting-edge AI technology.</p>
+        <button class="cta-button" onclick="location.href='signup.html'">
+            <i class="fas fa-rocket"></i> Get Started Free
+        </button>
+    </div>
 </section>
 
+<main class="content">
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <h2>Powerful Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3>Email Integration</h3>
+                <p>Automatically extract requirements from email threads and convert them into structured BRDs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fab fa-slack"></i>
+                </div>
+                <h3>Slack Integration</h3>
+                <p>Seamlessly pull conversations from Slack channels and transform discussions into actionable requirements.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3>Meeting Transcripts</h3>
+                <p>Upload meeting recordings or transcripts and let AI identify key requirements and decisions.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Document Processing</h3>
+                <p>Process existing documents and extract structured requirements with intelligent categorization.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3>AI Enhancement</h3>
+                <p>Advanced AI algorithms ensure comprehensive, accurate, and professionally formatted BRDs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h3>Multiple Formats</h3>
+                <p>Export your BRDs in various formats including PDF, Word, HTML, and custom templates.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <h2>About BRD AI</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <h3>Revolutionizing Requirements Documentation</h3>
+                <p>BRD AI is the next-generation solution for business analysts, project managers, and development teams who need to create comprehensive Business Requirements Documents quickly and accurately.</p>
+                
+                <h3>Why Choose BRD AI?</h3>
+                <p>Our platform uses advanced natural language processing and machine learning to understand context, identify stakeholders, extract functional and non-functional requirements, and generate professional documentation that meets industry standards.</p>
+                
+                <h3>Built for Modern Teams</h3>
+                <p>Designed with remote and hybrid teams in mind, BRD AI integrates with the tools you already use and provides collaborative features that keep everyone aligned.</p>
+            </div>
+            <div class="about-stats">
+                <div class="stat-card">
+                    <span class="stat-number">98%</span>
+                    <span class="stat-label">Accuracy Rate</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">10x</span>
+                    <span class="stat-label">Faster Creation</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Companies Trust Us</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">AI Availability</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="section">
+        <h2>How It Works</h2>
+        <div class="process-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Input Your Data</h3>
+                <p>Upload emails, documents, meeting transcripts, or connect your Slack workspace.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>AI Analysis</h3>
+                <p>Our advanced AI analyzes your content to identify requirements, stakeholders, and priorities.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Structure & Organize</h3>
+                <p>Requirements are automatically categorized and organized into a professional BRD format.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Review & Export</h3>
+                <p>Review the generated BRD, make any necessary edits, and export in your preferred format.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="section">
+        <h2>Choose Your Plan</h2>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Starter</h3>
+                <div class="price">$29<span style="font-size: 1rem; color: #cbd5e1;">/month</span></div>
+                <ul class="pricing-features">
+                    <li>Up to 10 BRDs per month</li>
+                    <li>Email integration</li>
+                    <li>Basic templates</li>
+                    <li>PDF export</li>
+                    <li>Email support</li>
+                </ul>
+                <button class="cta-button">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Professional</h3>
+                <div class="price">$79<span style="font-size: 1rem; color: #cbd5e1;">/month</span></div>
+                <ul class="pricing-features">
+                    <li>Unlimited BRDs</li>
+                    <li>All integrations</li>
+                    <li>Premium templates</li>
+                    <li>All export formats</li>
+                    <li>Priority support</li>
+                    <li>Team collaboration</li>
+                </ul>
+                <button class="cta-button">Most Popular</button>
+            </div>
+            <div class="pricing-card">
+                <h3>Enterprise</h3>
+                <div class="price">Custom</div>
+                <ul class="pricing-features">
+                    <li>Custom integrations</li>
+                    <li>On-premise deployment</li>
+                    <li>Custom templates</li>
+                    <li>Dedicated support</li>
+                    <li>SLA guarantee</li>
+                    <li>Training included</li>
+                </ul>
+                <button class="cta-button">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+</main>
+
 <footer>
-© 2026  BRD AI Platform
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Support</a>
+            <a href="#">API Documentation</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <p>&copy; 2026 BRD AI Platform. All rights reserved. | Powered by Advanced AI Technology</p>
+    </div>
 </footer>
 
-<script src="script.js"></script>
+<script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Add scroll effect to navigation
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('nav');
+        if (window.scrollY > 100) {
+            nav.style.background = 'rgba(15, 23, 42, 0.95)';
+        } else {
+            nav.style.background = 'rgba(15, 23, 42, 0.9)';
+        }
+    });
+
+    // Animate elements on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-on-scroll');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all sections and cards
+    document.querySelectorAll('.section, .feature-card, .step, .pricing-card').forEach(el => {
+        observer.observe(el);
+    });
+</script>
+
 </body>
 </html>

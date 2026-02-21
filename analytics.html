@@ -55,7 +55,7 @@ footer{margin-top:80px;text-align:center;opacity:0.5;}
 
 <canvas id="particles"></canvas>
 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-<div id="welcome"></div>
+<div id="welcome">Welcome, User</div>
 
 <div class="container" id="container">
   <div class="sidebar" id="sidebar">
@@ -66,7 +66,7 @@ footer{margin-top:80px;text-align:center;opacity:0.5;}
     <a href="analytics.html">Analytics</a>
     <a href="traceability.html">Traceability</a>
     <a href="settings.html">Settings</a>
-    <a href="#" onclick="logout()">Logout</a>
+    <a href="#" onclick="alert('Logged out')">Logout</a>
   </div>
 
   <div class="content" id="content">
@@ -100,76 +100,6 @@ footer{margin-top:80px;text-align:center;opacity:0.5;}
   <p>Analyze trends, platform usage, and requirement categories.</p>
 </div>
 
-<!-- Firebase + Analytics -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDxf6hJgWRplrxqMzCFEjSvVUw9w6QP6Xg",
-  authDomain: "brd-model.firebaseapp.com",
-  projectId: "brd-model",
-  storageBucket: "brd-model.firebasestorage.app",
-  messagingSenderId: "236852751504",
-  appId: "1:236852751504:web:eb2db4a4d00ecd2b1bfc15",
-  measurementId: "G-Y9ZJGB183B"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-onAuthStateChanged(auth, async (user) => {
-  if(!user) window.location.href="index.html";
-  else document.getElementById("welcome").innerText = `Welcome, ${user.email}`;
-  await loadAnalytics();
-});
-
-window.logout = async () => { await signOut(auth); window.location.href="index.html"; }
-
-async function loadAnalytics(){
-  const snapshot = await getDocs(collection(db,"user_actions"));
-  let actions = snapshot.docs.map(doc=>doc.data());
-
-  const platformCount = {Gmail:0, Zoom:0, Calendar:0};
-  const categories = {Functional:0, NonFunctional:0, Constraints:0, Assumptions:0};
-  let confidenceData = [0,0,0,0];
-
-  if(actions.length>0){
-    actions.forEach(a=>{
-      if(platformCount[a.platform]!==undefined) platformCount[a.platform]++;
-      if(a.requirementCategory && categories[a.requirementCategory]!==undefined) categories[a.requirementCategory]++;
-    });
-    confidenceData = [82,85,88,92]; 
-  }
-
-  const ctx1 = document.getElementById("analyticsChart1").getContext("2d");
-  new Chart(ctx1,{
-    type:"bar",
-    data:{
-      labels:Object.keys(platformCount),
-      datasets:[{label:"Clicks",data:Object.values(platformCount),backgroundColor:["#6366f1","#22d3ee","#4ade80"]}]
-    },
-    options:{responsive:true,maintainAspectRatio:true,aspectRatio:2,scales:{y:{beginAtZero:true}},plugins:{legend:{display:false},title:{display:true,text:actions.length>0?"Platform Contribution":"No data yet",color:"#ffffff",font:{size:18}}}}
-  });
-
-  const ctx2 = document.getElementById("analyticsChart2").getContext("2d");
-  new Chart(ctx2,{
-    type:"doughnut",
-    data:{labels:Object.keys(categories),datasets:[{data:Object.values(categories),backgroundColor:["#6366f1","#22d3ee","#4ade80","#f87171"]}]},
-    options:{responsive:true,maintainAspectRatio:true,aspectRatio:2,plugins:{legend:{position:'bottom'},title:{display:true,text:actions.length>0?"Requirement Category Breakdown":"No data yet",color:"#ffffff",font:{size:18}}}}
-  });
-
-  const ctx3 = document.getElementById("analyticsChart3").getContext("2d");
-  new Chart(ctx3,{
-    type:"line",
-    data:{labels:["Week 1","Week 2","Week 3","Week 4"],datasets:[{label:"Confidence %",data:confidenceData,borderColor:"#22d3ee",fill:false,tension:0.4}]},
-    options:{responsive:true,maintainAspectRatio:true,aspectRatio:2,scales:{y:{beginAtZero:true,max:100}},plugins:{title:{display:true,text:actions.length>0?"AI Confidence Trend":"No data yet",color:"#ffffff",font:{size:18}}}}
-  });
-}
-</script>
-
 <script>
 // ================= Sidebar toggle =================
 function toggleSidebar(){
@@ -179,6 +109,8 @@ function toggleAI(){
   let popup = document.getElementById("aiPopup");
   popup.style.display = popup.style.display==="block"?"none":"block";
 }
+
+// ================= Typewriter =================
 let text="Advanced BRD Analytics Engine";
 let i=0;
 function typeWriter(){
@@ -188,6 +120,8 @@ function typeWriter(){
   }
 }
 typeWriter();
+
+// ================= Particles =================
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
@@ -196,6 +130,31 @@ for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.rando
 function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="rgba(99,102,241,0.5)";particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});update();}
 function update(){particles.forEach(p=>{p.y+=p.d;if(p.y>canvas.height){p.y=0;}});}
 setInterval(draw,33);
+
+// ================= Charts =================
+const ctx1 = document.getElementById("analyticsChart1").getContext("2d");
+new Chart(ctx1,{
+  type:"bar",
+  data:{
+    labels:["Gmail","Zoom","Calendar"],
+    datasets:[{label:"Clicks",data:[10,15,8],backgroundColor:["#6366f1","#22d3ee","#4ade80"]}]
+  },
+  options:{responsive:true,maintainAspectRatio:true,aspectRatio:2,scales:{y:{beginAtZero:true}},plugins:{legend:{display:false},title:{display:true,text:"Platform Contribution",color:"#ffffff",font:{size:18}}}}
+});
+
+const ctx2 = document.getElementById("analyticsChart2").getContext("2d");
+new Chart(ctx2,{
+  type:"doughnut",
+  data:{labels:["Functional","NonFunctional","Constraints","Assumptions"],datasets:[{data:[5,3,2,1],backgroundColor:["#6366f1","#22d3ee","#4ade80","#f87171"]}]},
+  options:{responsive:true,maintainAspectRatio:true,aspectRatio:2,plugins:{legend:{position:'bottom'},title:{display:true,text:"Requirement Category Breakdown",color:"#ffffff",font:{size:18}}}}
+});
+
+const ctx3 = document.getElementById("analyticsChart3").getContext("2d");
+new Chart(ctx3,{
+  type:"line",
+  data:{labels:["Week 1","Week 2","Week 3","Week 4"],datasets:[{label:"Confidence %",data:[82,85,88,92],borderColor:"#22d3ee",fill:false,tension:0.4}]},
+  options:{responsive:true,maintainAspectRatio:true,aspectRatio:2,scales:{y:{beginAtZero:true,max:100}},plugins:{title:{display:true,text:"AI Confidence Trend",color:"#ffffff",font:{size:18}}}}
+});
 </script>
 <script src="theme.js"></script>
 </body>

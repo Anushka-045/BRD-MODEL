@@ -5,117 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Settings | BRD Intelligence</title>
 <script src="theme.js"></script>
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { 
-    getAuth, onAuthStateChanged, signOut, EmailAuthProvider, 
-    reauthenticateWithCredential, updatePassword, deleteUser, linkWithCredential 
-  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDxf6hJgWRplrxqMzCFEjSvVUw9w6QP6Xg",
-    authDomain: "brd-model.firebaseapp.com",
-    projectId: "brd-model",
-    storageBucket: "brd-model.appspot.com",
-    messagingSenderId: "236852751504",
-    appId: "1:236852751504:web:eb2db4a4d00ecd2b1bfc15",
-    measurementId: "G-Y9ZJGB183B"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  // Auth state
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) window.location.href = "index.html";
-    else {
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        document.getElementById("name").value = data.name || "";
-        document.getElementById("email").value = data.email || "";
-      }
-    }
-  });
-
-  window.logout = async function() {
-    await signOut(auth);
-    window.location.href = "index.html";
-  };
-  window.saveProfile = async function() {
-    const user = auth.currentUser;
-    if (!user) return alert("No user logged in.");
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    await setDoc(doc(db, "users", user.uid), { name, email }, { merge: true });
-    alert("Profile saved!");
-  };
-  window.deleteAccount = async function() {
-    const user = auth.currentUser;
-    if (!user) return alert("No user logged in.");
-    if (!confirm("Delete account?")) return;
-    await deleteDoc(doc(db, "users", user.uid));
-    await deleteUser(user);
-    alert("Account deleted!");
-    window.location.href = "index.html";
-  };
-  window.addPasswordForGoogleUser = async function() {
-    const user = auth.currentUser;
-    if (!user) return alert("No user logged in");
-
-    const newPass = prompt("Set a password for your account:");
-    if (!newPass) return;
-
-    const credential = EmailAuthProvider.credential(user.email, newPass);
-
-    try {
-      await linkWithCredential(user, credential);
-      alert("Password added successfully! You can now use email/password login.");
-    } catch(e) {
-      if (e.code === "auth/credential-already-in-use") {
-        alert("This email is already linked to another account.");
-      } else {
-        alert("Error adding password: " + e.message);
-      }
-    }
-  };
-  window.handlePassword = async function() {
-    const user = auth.currentUser;
-    if (!user) return alert("No user logged in");
-
-    const isGoogleUser = user.providerData.some(p => p.providerId === "google.com");
-
-    if (isGoogleUser) {
-      addPasswordForGoogleUser();
-    } else {
-      const currentPass = prompt("Enter your current password:");
-      if (!currentPass) return;
-      const cred = EmailAuthProvider.credential(user.email, currentPass);
-
-      reauthenticateWithCredential(user, cred)
-        .then(() => {
-          const newPass = prompt("Enter new password:");
-          if (!newPass) return;
-          updatePassword(user, newPass)
-            .then(() => alert("Password updated!"))
-            .catch(e => alert("Error updating password: " + e.message));
-        })
-        .catch(e => alert("Reauthentication failed: " + e.message));
-    }
-  };
-  window.setTheme = function(theme){
-    document.body.classList.remove('dark','light');
-    document.body.classList.add(theme);
-    localStorage.setItem('theme', theme);
-  };
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  setTheme(savedTheme);
-
-</script>
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;scroll-behavior:smooth;}
 body{overflow-x:hidden;}
@@ -214,10 +103,42 @@ footer{align-self:center;margin-top:50px;opacity:0.7;}
 </div>
 
 <script>
+// Sidebar toggle
 function toggleSidebar(){
   let sidebar = document.getElementById("sidebar");
   sidebar.classList.toggle("hidden");
 }
+
+// Dummy functions for local demo (no Firebase)
+function logout(){
+  alert("Logged out (local demo)");
+  window.location.href = "login.html";
+}
+function saveProfile(){
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  alert(`Profile saved!\nName: ${name}\nEmail: ${email} (local demo)`);
+}
+function deleteAccount(){
+  if(confirm("Delete account?")) {
+    alert("Account deleted (local demo)");
+    window.location.href = "login.html";
+  }
+}
+function handlePassword(){
+  const newPass = prompt("Enter new password:");
+  if(newPass) alert("Password updated (local demo)!");
+}
+
+// Theme
+function setTheme(theme){
+  document.body.classList.remove('dark','light');
+  document.body.classList.add(theme);
+  localStorage.setItem('theme', theme);
+}
+setTheme(localStorage.getItem('theme') || 'dark');
+
+// Particle animation
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
