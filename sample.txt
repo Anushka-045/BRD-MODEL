@@ -1,0 +1,4 @@
+Email: Lunch tomorrow.
+Meeting: Client wants a food delivery app.
+Discussion: Users must login and make payments.
+Timeline is 3 months.
