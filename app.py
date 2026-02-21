@@ -6,11 +6,14 @@ from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from docx import Document
 import pytesseract
+import io
 from PIL import Image
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 load_dotenv()
 api_key = os.getenv("OPENROUTER_API_KEY")
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  
+MAX_CHARS = 8000
 @app.route("/")
 def home():
     return "Flask+DEEPSEEK is running"
@@ -49,6 +52,10 @@ def upload_file():
 
             if not text.strip():
                 return jsonify({"error": "PDF has no readable text"}), 400
+
+            
+            if len(text) > MAX_CHARS:
+                text = text[:MAX_CHARS]
 
             file_content = text
 
@@ -123,7 +130,8 @@ def edit():
     return jsonify(updated_json)
 def generate_from_text(user_text):
     url = "https://openrouter.ai/api/v1/chat/completions"
-
+    if len(user_text) > MAX_CHARS:
+        user_text = user_text[:MAX_CHARS]
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
@@ -188,4 +196,4 @@ def generate_from_text(user_text):
     return ai_json
     
 if __name__ =="__main__":
-    app.run(debug=True)
+    app.run(debug=True,use_reloader=False)
