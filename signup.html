@@ -5,14 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Signup | BRD Model</title>
 <style>
-body{margin:0;height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f172a,#1e293b);color:white;font-family:Segoe UI, sans-serif;}
-.glass{background:rgba(255,255,255,0.08);padding:40px;border-radius:20px;backdrop-filter:blur(15px);width:300px;box-sizing:border-box;}
-input{width:100%;padding:10px;margin:10px 0;border:none;border-radius:10px;box-sizing:border-box;}
-button{width:100%;padding:10px;border:none;border-radius:20px;background:#6366f1;color:white;cursor:pointer;margin-top:10px;}
+body {
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  font-family:Segoe UI, sans-serif;
+}
+.glass {
+  background:rgba(255,255,255,0.08);
+  padding:40px;
+  border-radius:20px;
+  backdrop-filter:blur(15px);
+  width:300px;
+  box-sizing:border-box;
+}
+input {
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border:none;
+  border-radius:10px;
+  box-sizing:border-box;
+  outline:none;
+  background:rgba(255,255,255,0.1);
+  color:white;
+}
+input::placeholder { color: rgba(255,255,255,0.7); }
+button {
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:20px;
+  background:#6366f1;
+  color:white;
+  cursor:pointer;
+  margin-top:10px;
+  font-weight:bold;
+}
 button:disabled{background:#a5b4fc;cursor:not-allowed;}
 p{text-align:center;margin-top:10px;font-size:14px;}
 a{color:#6366f1;text-decoration:none;}
-.google-btn{background:#db4437;}
+button.google-btn{background:#db4437;}
 </style>
 </head>
 <body>
@@ -27,93 +64,30 @@ a{color:#6366f1;text-decoration:none;}
   <p>Already have an account? <a href="login.html">Login here</a></p>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+<script>
+  // Local demo signup (no backend)
+  function signup() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-// --- Firebase Config ---
-const firebaseConfig = {
-  apiKey: "AIzaSyDxf6hJgWRplrxqMzCFEjSvVUw9w6QP6Xg",
-  authDomain: "brd-model.firebaseapp.com",
-  projectId: "brd-model",
-  storageBucket: "brd-model.firebasestorage.app",
-  messagingSenderId: "236852751504",
-  appId: "1:236852751504:web:eb2db4a4d00ecd2b1bfc15",
-  measurementId: "G-Y9ZJGB183B"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    if(!name || !email || password.length < 6) {
+      alert("Enter valid details. Password must be at least 6 characters.");
+      return;
+    }
 
-// --- Email/Password Signup ---
-async function signup() {
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const button = document.getElementById("emailSignupBtn");
-
-  button.disabled = true;
-  button.textContent = "Signing up...";
-
-  if (!name || !email || password.length < 6) {
-    alert("Enter valid details. Password must be at least 6 characters.");
-    button.disabled = false;
-    button.textContent = "Signup";
-    return;
+    alert("Signup successful (demo)!");
+    window.location.href = "dashboard.html"; // redirect
   }
 
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
-    await setDoc(doc(db, "users", user.uid), {
-      name: name,
-      email: email,
-      createdAt: serverTimestamp()
-    });
-
-    alert("Signup successful!");
-    window.location.href = "dashboard.html";
-  } catch (error) {
-    console.error("Signup error:", error);
-    alert(error.message);
-    button.disabled = false;
-    button.textContent = "Signup";
+  function googleSignIn() {
+    alert("Google Sign-In (demo)!");
+    window.location.href = "dashboard.html"; // redirect
   }
-}
 
-// --- Google Signup ---
-async function googleSignIn() {
-  const provider = new GoogleAuthProvider();
-  const button = document.getElementById("googleBtn");
-  button.disabled = true;
-  button.textContent = "Signing in...";
-
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    await setDoc(doc(db, "users", user.uid), {
-      name: user.displayName,
-      email: user.email,
-      createdAt: serverTimestamp()
-    });
-
-    alert("Google Sign-in successful!");
-    window.location.href = "dashboard.html";
-  } catch (error) {
-    console.error("Google sign-in error:", error);
-    alert(error.message);
-    button.disabled = false;
-    button.textContent = "Sign in with Google";
-  }
-}
-
-// --- Attach event listeners ---
-document.getElementById("emailSignupBtn").addEventListener("click", signup);
-document.getElementById("googleBtn").addEventListener("click", googleSignIn);
-
+  document.getElementById("emailSignupBtn").addEventListener("click", signup);
+  document.getElementById("googleBtn").addEventListener("click", googleSignIn);
 </script>
+
 </body>
 </html>

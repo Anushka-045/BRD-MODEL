@@ -64,7 +64,6 @@ footer{margin-top:80px;text-align:center;opacity:0.5;}
     <a href="analytics.html">Analytics</a>
     <a href="traceability.html">Traceability</a>
     <a href="settings.html">Settings</a>
-    <a href="#" onclick="logout()">Logout</a>
   </div>
 
   <div class="content" id="content">
@@ -79,16 +78,20 @@ footer{margin-top:80px;text-align:center;opacity:0.5;}
         <thead>
           <tr><th>Req ID</th><th>Description</th><th>Dev Task</th><th>Test Case</th><th>Status</th><th>Risk</th></tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          <!-- Example static rows -->
+          <tr><td>REQ-001</td><td>Login feature</td><td>TASK-101</td><td>TC-001</td><td><span class="status complete">Complete</span></td><td class="risk-medium">Medium</td></tr>
+          <tr><td>REQ-002</td><td>Dashboard page</td><td>TASK-102</td><td>TC-002</td><td><span class="status progress">In Progress</span></td><td class="risk-high">High</td></tr>
+        </tbody>
       </table>
     </div>
 
     <div class="card" id="impactCard">
       <h2>Impact Analysis</h2>
-      <p><strong>Selected Requirement:</strong> <span id="impactReq">Loading...</span></p>
-      <p>Linked Test Cases: <span id="impactTest">0</span></p>
-      <p>Linked Dev Tasks: <span id="impactDev">0</span></p>
-      <p>Modules Affected: <span id="impactModules">-</span></p>
+      <p><strong>Selected Requirement:</strong> <span id="impactReq">REQ-001</span></p>
+      <p>Linked Test Cases: <span id="impactTest">1</span></p>
+      <p>Linked Dev Tasks: <span id="impactDev">1</span></p>
+      <p>Modules Affected: <span id="impactModules">Auth, UI</span></p>
       <p id="impactRisk" class="risk-high">Risk Score: HIGH ⚠</p>
     </div>
 
@@ -99,7 +102,7 @@ footer{margin-top:80px;text-align:center;opacity:0.5;}
 
     <div class="card" id="conflictCard">
       <h2>AI Conflict Detection</h2>
-      <p id="conflictText">⚠ Loading conflicts...</p>
+      <p id="conflictText">⚠ No conflicts detected.</p>
     </div>
 
     <footer>© 2026 BRD Intelligence Platform</footer>
@@ -120,12 +123,42 @@ function toggleAI(){
   const popup = document.getElementById("aiPopup");
   popup.style.display = popup.style.display==='block'?'none':'block';
 }
+
+// Particle effect
 const canvas=document.getElementById("particles"), ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 let particles=[];
 for(let i=0;i<80;i++) particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2,d:Math.random()*1});
-function draw(){ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(99,102,241,0.5)"; particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill(); p.y+=p.d; if(p.y>canvas.height)p.y=0;});}
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(99,102,241,0.5)";
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    p.y+=p.d;
+    if(p.y>canvas.height)p.y=0;
+  });
+}
 setInterval(draw,33);
+
+// Example Chart.js test coverage
+const ctxCoverage = document.getElementById('coverageChart').getContext('2d');
+const coverageChart = new Chart(ctxCoverage, {
+  type: 'doughnut',
+  data: {
+    labels: ['Covered', 'Pending'],
+    datasets: [{
+      data: [70, 30],
+      backgroundColor: ['#16a34a', '#facc15'],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { color: 'white' } } }
+  }
+});
 </script>
 <script src="theme.js"></script>
 </body>

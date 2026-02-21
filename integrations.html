@@ -65,7 +65,6 @@ body.light .menu-btn {color:#0f172a;}
   border-radius:20px;
   margin-bottom:30px;
   box-shadow:0 10px 30px rgba(0,0,0,0.4);
-  transition:0.3s;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -98,13 +97,14 @@ footer {text-align:center; margin-top:60px; opacity:0.5;}
     <a href="analytics.html">Analytics</a>
     <a href="traceability.html">Traceability</a>
     <a href="settings.html">Settings</a>
-    <a href="#" onclick="logout()">Logout</a>
   </div>
+
   <div class="content">
     <div class="hero">
       <h1>Communication Sources</h1>
       <p>Open your communication platforms in a new tab. Copy relevant project emails, meeting notes, or event details and paste them into the BRD Generator for AI structuring.</p>
     </div>
+
     <div class="card">
       <div>
         <h3 style="display:flex;align-items:center;gap:12px;">
@@ -153,49 +153,15 @@ footer {text-align:center; margin-top:60px; opacity:0.5;}
   </div>
 </div>
 
-<!-- Firebase & Platform JS -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyDxf6hJgWRplrxqMzCFEjSvVUw9w6QP6Xg",
-  authDomain: "brd-model.firebaseapp.com",
-  projectId: "brd-model",
-  storageBucket: "brd-model.firebasestorage.app",
-  messagingSenderId: "236852751504",
-  appId: "1:236852751504:web:eb2db4a4d00ecd2b1bfc15",
-  measurementId: "G-Y9ZJGB183B"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-onAuthStateChanged(auth, async (user) => {
-  if(!user) window.location.href="index.html";
-  else{
-    const userDoc = await getDoc(doc(db,"users",user.uid));
-    if(userDoc.exists()){
-      document.getElementById("welcome").innerHTML = `Welcome, ${userDoc.data().name}!`;
-    }
-  }
-});
-window.logout = async ()=>{await signOut(auth); window.location.href="index.html";}
-async function logAction(platform){
-  try{await addDoc(collection(db,"user_actions"),{uid:auth.currentUser.uid, platform, timestamp:new Date()});}
-  catch(err){console.error(err);}
-}
-</script>
-
 <script>
 const menuBtn = document.querySelector(".menu-btn");
 const sidebar = document.getElementById("sidebar");
 menuBtn.onclick = function(){sidebar.classList.toggle("hidden");}
-document.getElementById("gmail-btn").onclick = ()=>{window.open("https://mail.google.com","_blank"); logAction("Gmail");}
-document.getElementById("zoom-btn").onclick = ()=>{window.open("https://zoom.us/signin","_blank"); logAction("Zoom");}
-document.getElementById("calendar-btn").onclick = ()=>{window.open("https://calendar.google.com","_blank"); logAction("Google Calendar");}
+
+// Open links locally (no database)
+document.getElementById("gmail-btn").onclick = ()=>{window.open("https://mail.google.com","_blank");}
+document.getElementById("zoom-btn").onclick = ()=>{window.open("https://zoom.us/signin","_blank");}
+document.getElementById("calendar-btn").onclick = ()=>{window.open("https://calendar.google.com","_blank");}
 </script>
 <script src="theme.js"></script>
 </body>
