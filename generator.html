@@ -35,18 +35,16 @@ button:hover{background:#4f46e5;}
 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
 
 <div class="container">
-
-  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <h2>MENU</h2>
     <a href="dashboard.html">Dashboard</a>
     <a href="generator.html">BRD Generator</a>
+    <a href="integrations.html">Integrations</a>
     <a href="analytics.html">Analytics</a>
+    <a href="traceability.html">Traceability</a>
     <a href="settings.html">Settings</a>
     <a href="#" onclick="logout()">Logout</a>
   </div>
-
-  <!-- Main Content -->
   <div class="content">
     <div class="hero">
       <h1 id="typewriter"></h1>
@@ -83,7 +81,7 @@ const output = document.getElementById("output");
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("hidden");}
 
 // Dummy logout
-function logout(){alert("Logging out..."); window.location.href="login.html";}
+function logout(){alert("Logging out..."); window.location.href="index.html";}
 
 // Typewriter hero text
 let text="AI-Powered BRD Generator";
