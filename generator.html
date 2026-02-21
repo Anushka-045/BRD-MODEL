@@ -4,32 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BRD Generator</title>
+
 <style>
-/* Base Reset */
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
-body{background:#0f172a;color:white;overflow-x:hidden;transition:0.3s;}
-.container{display:flex;min-height:100vh;transition:0.4s;}
-.sidebar{width:240px;background:#1e293b;padding:25px 15px;flex-shrink:0;display:flex;flex-direction:column;transition:0.4s;}
+body{background:#0f172a;color:white;overflow-x:hidden;}
+.container{display:flex;min-height:100vh;}
+.sidebar{width:240px;background:#1e293b;padding:25px 15px;flex-shrink:0;display:flex;flex-direction:column;transition:0.3s;}
 .sidebar.hidden{width:0;padding:0;overflow:hidden;}
 .sidebar h2{text-align:center;margin-bottom:30px;font-size:20px;}
 .sidebar a{display:block;color:white;text-decoration:none;padding:10px 15px;margin:6px 0;border-radius:8px;transition:0.2s;}
 .sidebar a:hover{background:rgba(255,255,255,0.1);}
-.menu-btn{position:fixed;top:20px;left:20px;background:#6366f1;border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer;z-index:1100;font-size:15px;}
-.content{flex:1;padding:40px 30px;transition:0.4s;}
-.hero{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);padding:30px;border-radius:20px;margin-bottom:25px;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+.menu-btn{position:fixed;top:20px;left:20px;background:#6366f1;border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer;z-index:1100;}
+.content{flex:1;padding:40px 30px;}
+.hero{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);padding:30px;border-radius:20px;margin-bottom:25px;}
 .hero h1{font-size:36px;background:linear-gradient(90deg,#6366f1,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:15px;}
 .hero p{opacity:0.8;}
-.card{background:rgba(255,255,255,0.05);padding:25px;border-radius:15px;margin-bottom:25px;box-shadow:0 5px 20px rgba(0,0,0,0.4);transition:0.4s;}
-.card h3{font-size:20px;margin-bottom:12px;color:#22d3ee;}
-textarea{width:100%;height:150px;border:none;border-radius:10px;padding:12px;background:rgba(255,255,255,0.1);color:white;resize:none;outline:none;margin-bottom:12px;transition:0.2s;}
-textarea:focus{background:rgba(255,255,255,0.15);}
+.card{background:rgba(255,255,255,0.05);padding:25px;border-radius:15px;margin-bottom:25px;}
+.card h3{margin-bottom:12px;color:#22d3ee;}
+textarea{width:100%;height:160px;border:none;border-radius:10px;padding:12px;background:rgba(255,255,255,0.1);color:white;resize:none;margin-bottom:12px;}
+textarea:focus{background:rgba(255,255,255,0.15);outline:none;}
 input[type="file"]{margin-top:10px;margin-bottom:12px;color:white;}
-button{margin-top:8px;padding:10px 22px;border:none;border-radius:20px;background:#6366f1;color:white;cursor:pointer;transition:0.3s;}
+button{padding:10px 22px;border:none;border-radius:20px;background:#6366f1;color:white;cursor:pointer;}
 button:hover{background:#4f46e5;}
 #loading{display:none;margin-top:10px;color:#22d3ee;}
-#output{margin-top:12px;white-space:pre-wrap;background:rgba(255,255,255,0.05);padding:15px;border-radius:10px;max-height:400px;overflow:auto;font-family:monospace;font-size:14px;}
+#output{margin-top:12px;white-space:pre-wrap;background:rgba(255,255,255,0.05);padding:15px;border-radius:10px;max-height:450px;overflow:auto;font-family:monospace;font-size:14px;}
 </style>
 </head>
+
 <body>
 
 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
@@ -37,18 +38,19 @@ button:hover{background:#4f46e5;}
 <div class="container">
   <div class="sidebar" id="sidebar">
     <h2>MENU</h2>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="generator.html">BRD Generator</a>
-    <a href="integrations.html">Integrations</a>
-    <a href="analytics.html">Analytics</a>
-    <a href="traceability.html">Traceability</a>
-    <a href="settings.html">Settings</a>
-    <a href="#" onclick="logout()">Logout</a>
+    <a href="#">Dashboard</a>
+    <a href="#">BRD Generator</a>
+    <a href="#">Integrations</a>
+    <a href="#">Analytics</a>
+    <a href="#">Traceability</a>
+    <a href="#">Settings</a>
   </div>
+
   <div class="content">
+
     <div class="hero">
       <h1 id="typewriter"></h1>
-      <p>Upload communications or paste data to generate fully structured BRDs automatically with AI.</p>
+      <p>Upload communications or paste data to generate structured BRDs using AI.</p>
     </div>
 
     <div class="card">
@@ -63,63 +65,147 @@ button:hover{background:#4f46e5;}
       <button onclick="uploadFile()">Upload & Generate</button>
     </div>
 
-    <div id="loading">Processing... Please wait</div>
+    <div id="loading">Processing... Please wait...</div>
 
     <div class="card">
       <h3>Generated BRD Output</h3>
       <div id="output">Result will appear here...</div>
     </div>
+
   </div>
 </div>
-
 <script>
+
 const API_BASE = "http://127.0.0.1:5000";
 const loading = document.getElementById("loading");
 const output = document.getElementById("output");
 
-// Sidebar toggle
-function toggleSidebar(){document.getElementById("sidebar").classList.toggle("hidden");}
+// Sidebar
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("hidden");
+}
 
-// Dummy logout
-function logout(){alert("Logging out..."); window.location.href="index.html";}
-
-// Typewriter hero text
+// Typewriter
 let text="AI-Powered BRD Generator";
 let i=0;
-function typeWriter(){if(i<text.length){document.getElementById("typewriter").innerHTML+=text.charAt(i);i++;setTimeout(typeWriter,50);}}
+function typeWriter(){
+  if(i<text.length){
+    document.getElementById("typewriter").innerHTML+=text.charAt(i);
+    i++;
+    setTimeout(typeWriter,40);
+  }
+}
 typeWriter();
 
-// TEXT GENERATION
-async function generateText(){
-    const text=document.getElementById("textInput").value;
-    if(!text.trim()){alert("Please enter some text");return;}
-    loading.style.display="block"; output.innerText="";
-    try{
-        const response = await fetch(API_BASE + "/generate",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({text:text})
-        });
-        const data = await response.json();
-        output.innerText = JSON.stringify(data,null,2);
-    }catch(error){output.innerText="Error connecting to backend";console.error(error);}
-    loading.style.display="none";
+// Format BRD nicely
+function formatBRD(data){
+
+  if(!data || typeof data !== "object"){
+    return "❌ Invalid response format from backend.";
+  }
+
+  if(data.error){
+    return "❌ ERROR:\n\n" + data.error;
+  }
+
+  return `
+📌 EXECUTIVE SUMMARY
+${data.executive_summary || "N/A"}
+
+🎯 BUSINESS OBJECTIVES
+${(data.business_objectives || []).map(x => "- " + x).join("\n") || "N/A"}
+
+👥 STAKEHOLDERS
+${(data.stakeholders || []).map(x => "- " + x).join("\n") || "N/A"}
+
+⚙ FUNCTIONAL REQUIREMENTS
+${(data.functional_requirements || []).map(x => "- " + x).join("\n") || "N/A"}
+
+🔒 NON-FUNCTIONAL REQUIREMENTS
+${(data.non_functional_requirements || []).map(x => "- " + x).join("\n") || "N/A"}
+
+📝 ASSUMPTIONS
+${(data.assumptions || []).map(x => "- " + x).join("\n") || "N/A"}
+
+📅 TIMELINE
+${data.timeline || "N/A"}
+
+⚠ CONFLICTS
+${(data.conflicts || []).map(x => "- " + x).join("\n") || "N/A"}
+`;
 }
 
-// FILE UPLOAD
-async function uploadFile(){
-    const fileInput=document.getElementById("fileInput");
-    const file=fileInput.files[0];
-    if(!file){alert("Please select a file");return;}
-    const formData=new FormData(); formData.append("file",file);
-    loading.style.display="block"; output.innerText="";
+// Helper function to safely call backend
+async function callBackend(url, options){
+
+  try{
+    const response = await fetch(url, options);
+
+    const text = await response.text();
+
+    if(!response.ok){
+      return { error: "Backend returned " + response.status + "\n\n" + text };
+    }
+
     try{
-        const response=await fetch(API_BASE+"/upload-file",{method:"POST",body:formData});
-        const data=await response.json();
-        output.innerText=JSON.stringify(data,null,2);
-    }catch(error){output.innerText="Error uploading file";console.error(error);}
-    loading.style.display="none";
+      return JSON.parse(text);
+    }catch(e){
+      return { error: "Backend did not return valid JSON.\n\n" + text };
+    }
+
+  }catch(error){
+    return { error: "Cannot connect to backend.\n\nIs Flask running on port 5000?" };
+  }
 }
+
+// Generate Text
+async function generateText(){
+
+  const textInput = document.getElementById("textInput").value;
+
+  if(!textInput.trim()){
+    alert("Please enter some text");
+    return;
+  }
+
+  loading.style.display="block";
+  output.innerText="";
+
+  const data = await callBackend(API_BASE + "/generate",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({text:textInput})
+  });
+
+  output.innerText = formatBRD(data);
+  loading.style.display="none";
+}
+
+// Upload File
+async function uploadFile(){
+
+  const file = document.getElementById("fileInput").files[0];
+
+  if(!file){
+    alert("Please select a file");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file",file);
+
+  loading.style.display="block";
+  output.innerText="";
+
+  const data = await callBackend(API_BASE + "/upload-file",{
+    method:"POST",
+    body:formData
+  });
+
+  output.innerText = formatBRD(data);
+  loading.style.display="none";
+}
+
 </script>
 
 </body>
