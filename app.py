@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
@@ -9,19 +10,27 @@ import io
 from PIL import Image
 import joblib
 import vertexai
-from vertexai.generative_models import GenerativeModel
+from vertexai.preview.generative_models import GenerativeModel
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+# Tesseract path fix (Windows + Cloud Run Linux)
+if os.name == "nt":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 load_dotenv()
 
 PROJECT_ID = "brd-model"
 LOCATION = "us-central1"
 
+# Initialize Vertex AI
 vertexai.init(project=PROJECT_ID, location=LOCATION)
 
-model_gemini = GenerativeModel("projects/236852751504/locations/us-central1/models/2536317139069960192@1")
+# IMPORTANT: Managed tuned model — use only model name
+model_gemini = GenerativeModel("brd-gemini-tuned")
 
+# Load ML classifier
 model = joblib.load("email_classifier.pkl")
 vectorizer = joblib.load("tfidf_vectorizer.pkl")
 
@@ -43,7 +52,7 @@ def filter_business_text(text):
 
 @app.route("/")
 def home():
-    return "Flask + ML + Vertex Gemini is running"
+    return "Flask + ML + Tuned Gemini is running"
 
 
 @app.route("/generate", methods=["POST"])
@@ -116,12 +125,7 @@ def generate_from_text(user_text):
     prompt = f"""
 You are a professional Business Analyst.
 
-From the following communication data:
-1. Extract ONLY project-related information.
-2. Ignore personal or irrelevant content.
-3. Return STRICT JSON format.
-
-JSON format:
+Return STRICT JSON:
 {{
     "executive_summary": "",
     "business_objectives": [],
@@ -136,15 +140,17 @@ JSON format:
 Communication Data:
 {user_text}
 """
+
     try:
         response = model_gemini.generate_content(prompt)
-
         text_response = response.text.strip()
         text_response = text_response.replace("```json", "").replace("```", "").strip()
-
         return json.loads(text_response)
 
     except Exception as e:
         return {"error": str(e)}
+
+
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
