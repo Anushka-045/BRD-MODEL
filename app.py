@@ -17,6 +17,10 @@ from google.oauth2 import service_account
 # Load environment variables
 # ----------------------------
 load_dotenv()
+if os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON"):
+    with open("/tmp/gcp-key.json", "w") as f:
+        f.write(os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON"))
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/tmp/gcp-key.json"
 
 PROJECT_ID = "brd-model"
 LOCATION = "us-central1"
