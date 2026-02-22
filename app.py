@@ -20,7 +20,7 @@ LOCATION = "us-central1"
 
 vertexai.init(project=PROJECT_ID, location=LOCATION)
 
-model_gemini = GenerativeModel("gemini-2.0-flash")
+model_gemini = GenerativeModel("projects/236852751504/locations/us-central1/models/2536317139069960192@1")
 
 model = joblib.load("email_classifier.pkl")
 vectorizer = joblib.load("tfidf_vectorizer.pkl")
